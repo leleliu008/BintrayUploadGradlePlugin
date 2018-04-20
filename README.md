@@ -94,7 +94,18 @@ build
 这个命令还可以简化成<code>./gradlew :library:bU</code>，这就是上传到<a href="https://jcenter.bintray.com/" target=_blank>jCenter</a>的命令。当然，前提是您已经有了他的账户和仓库。
 
 ### 注意
-上面两个任务前面都加了<code>:library</code>，这是因为一般的Android工程都会包含至少两个子模块，一个一般是<code>app</code>或者是<code>sample</code>，另一个一般是<code>library</code>。从字面意思也可以知道，<code>library</code>模块就是编写我们要发布的库的，而<code>app</code>或者是<code>sample</code>是用来编写示例代码的。
+上面两个任务前面都加了<code>:library</code>，这是因为一般的<code>Android</code>工程都会包含至少两个子模块，一个一般是<code>app</code>或者是<code>sample</code>，另一个一般是<code>library</code>。从字面意思也可以知道，<code>library</code>模块就是编写我们要发布的库的，而<code>app</code>或者是<code>sample</code>是用来编写示例代码的。
 <p>
 您的工程如果是单模块的，那么省略<code>:library</code>即可。
 </p>
+
+## 示例工程
+下面这些工程都使用了该插件：
+<ul>
+    <li>
+        <a href="https://github.com/leleliu008/Android-CustomSpan" target="_blank">Android-CustomSpan</a>
+    </li>
+    <li>
+        <a href="https://github.com/leleliu008/Android-CustomDialog" target="_blank">Android-CustomDialog</a>
+    </li>
+</ul>
