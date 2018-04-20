@@ -48,7 +48,7 @@ plugins {
     id("com.fpliu.bintray.upload.android")
 }
 ```
-3、配置数据：
+3、配置数据(kotlin script)：
 ```
 // 这里是groupId，必须填写,一般填你唯一的包名
 group = "com.fpliu"
@@ -56,12 +56,14 @@ group = "com.fpliu"
 //这个是版本号，必须填写
 version = "1.0.0"
 
+val rootProjectName = rootProject.name
+
 bintrayUploadAndroidExtension {
     developerName = "leleliu008"
     developerEmail = "leleliu008@gamil.com"
 
-    projectSiteUrl = "https://github.com/$developerName/${rootProject.name}"
-    projectGitUrl = "https://github.com/$developerName/${rootProject.name}"
+    projectSiteUrl = "https://github.com/$developerName/${rootProjectName}"
+    projectGitUrl = "https://github.com/$developerName/${rootProjectName}"
 
     bintrayUserName = "xx"
     bintrayOrganizationName = "xx"
@@ -77,8 +79,8 @@ bintrayUploadAndroidExtension {
 ```
 build
 ├── libs
-│   ├── ${rootProjectName}-1.0.0-javadoc.jar
-│   └── ${rootProjectName}-1.0.0-sources.jar
+│   ├── ${rootProjectName}-${version}-javadoc.jar
+│   └── ${rootProjectName}-${version}-sources.jar
 ├── outputs
 │   └── aar
 │       └── ${rootProjectName}-release.aar
