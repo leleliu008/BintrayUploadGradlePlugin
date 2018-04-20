@@ -34,7 +34,9 @@ buildscript {
         //用于上传maven包到jCenter中
         //https://github.com/bintray/gradle-bintray-plugin
         classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3")
-
+        
+        //对android-maven-gradle-plugin和gradle-bintray-plugin两个插件的包装、简化插件
+        //https://github.com/leleliu008/BintrayUploadAndroidGradlePlugin
         classpath("com.fpliu:BintrayUploadAndroidGradlePlugin:1.0.0")
     }
 }
@@ -73,7 +75,7 @@ bintrayUploadAndroidExtension {
 ```
 ## gradle任务
 
-### ./gradlew install
+### ./gradlew :library:install
 用于生成必须上传到<a href="https://jcenter.bintray.com/" target="_blank">jCenter</a>必须的文件，
 执行此命令后在<code>build</code>目录下生成的内容如下：
 ```
@@ -90,3 +92,9 @@ build
 ```
 ### ./gradlew :library:bintrayUpload
 这个命令还可以简化成<code>./gradlew :library:bU</code>，这就是上传到<a href="https://jcenter.bintray.com/" target=_blank>jCenter</a>的命令。当然，前提是您已经有了他的账户和仓库。
+
+### 注意
+上面两个任务前面都加了<code>:library</code>，这是因为一般的Android工程都会包含至少两个子模块，一个一般是<code>app</code>或者是<code>sample</code>，另一个一般是<code>library</code>。从字面意思也可以知道，<code>library</code>模块就是编写我们要发布的库的，而<code>app</code>或者是<code>sample</code>是用来编写示例代码的。
+<p>
+您的工程如果是单模块的，那么省略<code>:library</code>即可。
+</p>
