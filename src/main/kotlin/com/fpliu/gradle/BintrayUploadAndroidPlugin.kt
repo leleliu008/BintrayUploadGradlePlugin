@@ -4,7 +4,7 @@ import com.android.build.gradle.LibraryExtension
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.plugins.MavenRepositoryHandlerConvention
 import org.gradle.api.tasks.Upload
@@ -12,7 +12,6 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.kotlin.dsl.NamedDomainObjectContainerScope
 import org.gradle.kotlin.dsl.task
-import org.gradle.kotlin.dsl.withConvention
 import org.gradle.kotlin.dsl.withGroovyBuilder
 
 class BintrayUploadAndroidPlugin : Plugin<Project> {
@@ -27,6 +26,20 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
         val extension = project.extensions.create<BintrayUploadAndroidExtension>("bintrayUploadAndroidExtension", BintrayUploadAndroidExtension::class.java)
 
         project.afterEvaluate {
+            project.logger.info("extension = $extension")
+
+            project.convention.plugins.forEach { key, value ->
+                project.logger.info("conventionPlugins: key = $key, value = $value")
+            }
+
+            project.extensions.schema.forEach {
+                project.logger.info("extensions: ${it.key}, ${it.value}")
+            }
+
+            project.plugins.forEach {
+                project.logger.info("plugin: $it")
+            }
+
             if ("" == extension.projectSiteUrl) {
                 extension.projectSiteUrl = "https://github.com/${extension.developerName}/$rootProjectName"
             }
@@ -37,34 +50,32 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
 
             NamedDomainObjectContainerScope(project.tasks).apply {
                 "install"(Upload::class) {
-                    repositories {
-                        withConvention(MavenRepositoryHandlerConvention::class) {
-                            mavenInstaller {
-                                configuration = project.configurations.getByName("archives")
-                                mavenInstaller().pom.project {
-                                    withGroovyBuilder {
-                                        "packaging"("aar")
-                                        "artifactId"(rootProjectName)
-                                        "name"(rootProjectName)
+                    configuration = project.configurations.getByName("archives")
+                    DslObject(repositories).convention.getPlugin(MavenRepositoryHandlerConvention::class.java).apply {
+                        mavenInstaller {
+                            it.pom.project {
+                                it.withGroovyBuilder {
+                                    "packaging"("aar")
+                                    "artifactId"(rootProjectName)
+                                    "name"(rootProjectName)
+                                    "url"(extension.projectSiteUrl)
+                                    "licenses" {
+                                        "license" {
+                                            "name"(extension.licenseName)
+                                            "url"(extension.licenseUrl)
+                                        }
+                                    }
+                                    "developers" {
+                                        "developer" {
+                                            "id"(extension.developerName)
+                                            "name"(extension.developerName)
+                                            "email"(extension.developerEmail)
+                                        }
+                                    }
+                                    "scm" {
+                                        "connection"(extension.projectGitUrl)
+                                        "developerConnection"(extension.projectGitUrl)
                                         "url"(extension.projectSiteUrl)
-                                        "licenses" {
-                                            "license" {
-                                                "name"(extension.licenseName)
-                                                "url"(extension.licenseUrl)
-                                            }
-                                        }
-                                        "developers" {
-                                            "developer" {
-                                                "id"(extension.developerName)
-                                                "name"(extension.developerName)
-                                                "email"(extension.developerEmail)
-                                            }
-                                        }
-                                        "scm" {
-                                            "connection"(extension.projectGitUrl)
-                                            "developerConnection"(extension.projectGitUrl)
-                                            "url"(extension.projectSiteUrl)
-                                        }
                                     }
                                 }
                             }
@@ -119,3 +130,6 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
         }
     }
 }
+
+fun Project.`bintrayUploadAndroidExtension`(configure: BintrayUploadAndroidExtension.() -> Unit) =
+        extensions.configure("bintrayUploadAndroidExtension", configure)
