@@ -35,7 +35,7 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
                 extension.projectGitUrl = "https://github.com/${extension.developerName}/$rootProjectName"
             }
 
-            NamedDomainObjectContainerScope(project.container(Task::class.java)).apply {
+            NamedDomainObjectContainerScope(project.tasks).apply {
                 "install"(Upload::class) {
                     repositories {
                         withConvention(MavenRepositoryHandlerConvention::class) {
