@@ -119,7 +119,7 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
                 setConfigurations("archives")
                 pkg = PackageConfig().apply {
                     userOrg = extension.bintrayOrganizationName
-                    repo = extension.bintrayOrganizationName
+                    repo = extension.bintrayRepositoryName
                     name = rootProjectName
                     websiteUrl = extension.projectSiteUrl
                     vcsUrl = extension.projectGitUrl
