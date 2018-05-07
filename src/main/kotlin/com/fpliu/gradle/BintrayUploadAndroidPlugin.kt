@@ -88,7 +88,7 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
 
             val bintray = project.extensions.getByName("bintray") as BintrayExtension
             //注意：这里很可能是null，比如，这是一个普通的基于JVM的工程，而不是Android工程
-            val android = project.extensions.getByName("android") as? LibraryExtension
+            val android = project.extensions.findByName("android") as? LibraryExtension
             val java = project.convention.getPluginByName("java") as JavaPluginConvention
 
             val src = if (android == null) {
