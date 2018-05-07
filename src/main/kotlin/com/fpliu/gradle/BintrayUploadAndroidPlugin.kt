@@ -6,11 +6,13 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.plugins.MavenRepositoryHandlerConvention
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.kotlin.dsl.NamedDomainObjectContainerScope
+import org.gradle.kotlin.dsl.getPluginByName
 import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.withGroovyBuilder
 
@@ -85,19 +87,27 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
             }
 
             val bintray = project.extensions.getByName("bintray") as BintrayExtension
-            val android = project.extensions.getByName("android") as LibraryExtension
+            //注意：这里很可能是null，比如，这是一个普通的基于JVM的工程，而不是Android工程
+            val android = project.extensions.getByName("android") as? LibraryExtension
+            val java = project.convention.getPluginByName("java") as JavaPluginConvention
+
+            val src = if (android == null) {
+                java.sourceSets.getByName("main").java.srcDirs
+            } else {
+                android.sourceSets.getByName("main").java.srcDirs
+            }
 
             // 生成jar包的task
             val sourcesJarTask = project.task("sourcesJar", Jar::class) {
-                from(android.sourceSets.getByName("main").java.srcDirs)
+                from(src)
                 baseName = rootProjectName
                 classifier = "sources"
             }
 
             // 生成jarDoc的task
             val javadocTask = project.task("javadoc", Javadoc::class) {
-                source(android.sourceSets.getByName("main").java.srcDirs)
-                classpath += project.files(android.bootClasspath)
+                source(src)
+                classpath += project.files(android?.bootClasspath)
                 isFailOnError = false
             }
 
