@@ -25,7 +25,7 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
             archivesBaseName = rootProjectName
         }
 
-        val extension = project.extensions.create<BintrayUploadAndroidExtension>("bintrayUploadAndroidExtension", BintrayUploadAndroidExtension::class.java)
+        val extension = project.extensions.create<BintrayUploadExtension>("bintrayUploadExtension", BintrayUploadExtension::class.java)
 
         project.afterEvaluate {
             project.logger.info("extension = $extension")
@@ -50,6 +50,10 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
                 extension.projectGitUrl = "https://github.com/${extension.developerName}/$rootProjectName"
             }
 
+            //注意：这里很可能是null，比如，这是一个普通的基于JVM的工程，而不是Android工程
+            val android = project.extensions.findByName("android") as? LibraryExtension
+            val java = project.convention.getPluginByName("java") as JavaPluginConvention
+
             NamedDomainObjectContainerScope(project.tasks).apply {
                 "install"(Upload::class) {
                     configuration = project.configurations.getByName("archives")
@@ -57,7 +61,7 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
                         mavenInstaller {
                             it.pom.project {
                                 it.withGroovyBuilder {
-                                    "packaging"("aar")
+                                    "packaging"(if (android == null) "jar" else "aar")
                                     "artifactId"(rootProjectName)
                                     "name"(rootProjectName)
                                     "url"(extension.projectSiteUrl)
@@ -85,11 +89,6 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
                     }
                 }
             }
-
-            val bintray = project.extensions.getByName("bintray") as BintrayExtension
-            //注意：这里很可能是null，比如，这是一个普通的基于JVM的工程，而不是Android工程
-            val android = project.extensions.findByName("android") as? LibraryExtension
-            val java = project.convention.getPluginByName("java") as JavaPluginConvention
 
             val src = if (android == null) {
                 java.sourceSets.getByName("main").java.srcDirs
@@ -123,6 +122,7 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
                 add("archives", sourcesJarTask)
             }
 
+            val bintray = project.extensions.getByName("bintray") as BintrayExtension
             bintray.apply {
                 user = extension.bintrayUserName
                 key = extension.bintrayApiKey
@@ -141,5 +141,5 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
     }
 }
 
-fun Project.`bintrayUploadAndroidExtension`(configure: BintrayUploadAndroidExtension.() -> Unit) =
-        extensions.configure("bintrayUploadAndroidExtension", configure)
+fun Project.`bintrayUploadExtension`(configure: BintrayUploadExtension.() -> Unit) =
+        extensions.configure("bintrayUploadExtension", configure)

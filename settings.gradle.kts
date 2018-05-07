@@ -1,1 +1,1 @@
-rootProject.name = "BintrayUploadAndroidGradlePlugin"
+rootProject.name = "BintrayUploadGradlePlugin"

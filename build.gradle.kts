@@ -1,16 +1,5 @@
 import java.util.Properties
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        //用于上传maven包到jCenter中
-        //https://github.com/bintray/gradle-bintray-plugin
-        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3")
-    }
-}
-
 plugins {
     id("java-gradle-plugin")
     kotlin("jvm").version("1.2.21")
@@ -29,8 +18,8 @@ java {
 gradlePlugin {
     plugins {
         create("simplePlugin") {
-            id = "com.fpliu.bintray.upload.android"
-            implementationClass = "com.fpliu.gradle.BintrayUploadAndroidPlugin"
+            id = "com.fpliu.bintray"
+            implementationClass = "com.fpliu.gradle.BintrayUploadPlugin"
         }
     }
 }

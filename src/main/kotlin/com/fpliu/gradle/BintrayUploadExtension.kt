@@ -1,6 +1,6 @@
 package com.fpliu.gradle
 
-open class BintrayUploadAndroidExtension {
+open class BintrayUploadExtension {
 
     var developerName: String = ""
 
