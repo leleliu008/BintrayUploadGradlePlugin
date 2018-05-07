@@ -104,8 +104,8 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
                 classifier = "sources"
             }
 
-            // 生成jarDoc的task
-            val javadocTask = project.task("javadoc", Javadoc::class) {
+            // 生成jarDoc的task（命名避免与原有的taskName相同）
+            val javadocTask = project.task("javadoc_", Javadoc::class) {
                 source(src)
                 classpath += project.files(android?.bootClasspath)
                 isFailOnError = false
