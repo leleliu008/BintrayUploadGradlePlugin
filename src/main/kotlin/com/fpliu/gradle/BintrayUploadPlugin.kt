@@ -16,7 +16,7 @@ import org.gradle.kotlin.dsl.getPluginByName
 import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.withGroovyBuilder
 
-class BintrayUploadAndroidPlugin : Plugin<Project> {
+class BintrayUploadPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         val rootProjectName = project.rootProject.name
@@ -139,7 +139,7 @@ class BintrayUploadAndroidPlugin : Plugin<Project> {
             }
         }
     }
-}
 
-fun Project.`bintrayUploadExtension`(configure: BintrayUploadExtension.() -> Unit) =
-        extensions.configure("bintrayUploadExtension", configure)
+    fun Project.`bintrayUploadExtension`(configure: BintrayUploadExtension.() -> Unit) =
+            extensions.configure("bintrayUploadExtension", configure)
+}

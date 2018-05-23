@@ -66,45 +66,6 @@ val siteUrl = "https://github.com/leleliu008/$rootProjectName"
 // GitHub仓库的URL,这个是说明，可随便填
 val gitUrl = "https://github.com/leleliu008/$rootProjectName"
 
-
-tasks {
-    "install"(Upload::class) {
-        repositories {
-            withConvention(MavenRepositoryHandlerConvention::class) {
-                mavenInstaller {
-                    configuration = configurations.getByName("archives")
-                    pom.project {
-                        withGroovyBuilder {
-                            "packaging"("jar")
-                            "artifactId"(rootProjectName)
-                            "name"(rootProjectName)
-                            "url"(siteUrl)
-                            "licenses" {
-                                "license" {
-                                    "name"("The Apache Software License, Version 2.0")
-                                    "url"("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                                }
-                            }
-                            "developers" {
-                                "developer" {
-                                    "id"("fpliu")
-                                    "name"("fpliu")
-                                    "email"("leleliu008@gmail.com")
-                                }
-                            }
-                            "scm" {
-                                "connection"(gitUrl)
-                                "developerConnection"(gitUrl)
-                                "url"(siteUrl)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 // 生成jar包的task
 val sourcesJarTask = task("sourcesJar", Jar::class) {
     from(java.sourceSets["main"].java.srcDirs)
@@ -115,7 +76,7 @@ val sourcesJarTask = task("sourcesJar", Jar::class) {
 // 生成jarDoc的task
 val javadocTask = task("javadoc_", Javadoc::class) {
     source(java.sourceSets["main"].java.srcDirs)
-//    classpath += project.files(java.)
+    //classpath += project.files(java.)
     isFailOnError = false
 }
 
@@ -147,3 +108,54 @@ bintray {
         publish = true
     }
 }
+
+gradle.addListener(object : TaskExecutionAdapter(){
+    override fun beforeExecute(task: Task) {
+        super.beforeExecute(task)
+
+        val taskName = task.name
+        println("beforeExecute() task = $task, taskName = $taskName")
+
+        if (taskName !== "install") {
+            return
+        }
+
+        tasks {
+            "install"(Upload::class) {
+                repositories {
+                    withConvention(MavenRepositoryHandlerConvention::class) {
+                        mavenInstaller {
+                            configuration = configurations.getByName("archives")
+                            pom.project {
+                                withGroovyBuilder {
+                                    "packaging"("jar")
+                                    "artifactId"(rootProjectName)
+                                    "name"(rootProjectName)
+                                    "url"(siteUrl)
+                                    "licenses" {
+                                        "license" {
+                                            "name"("The Apache Software License, Version 2.0")
+                                            "url"("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                        }
+                                    }
+                                    "developers" {
+                                        "developer" {
+                                            "id"("fpliu")
+                                            "name"("fpliu")
+                                            "email"("leleliu008@gmail.com")
+                                        }
+                                    }
+                                    "scm" {
+                                        "connection"(gitUrl)
+                                        "developerConnection"(gitUrl)
+                                        "url"(siteUrl)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+})
