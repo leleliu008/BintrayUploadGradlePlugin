@@ -16,11 +16,7 @@ open class BintrayUploadExtension {
     // GitHub仓库的URL
     var projectGitUrl: String = ""
 
-    var bintrayUserName: String = ""
-
     var bintrayOrganizationName: String = ""
 
     var bintrayRepositoryName: String = ""
-
-    var bintrayApiKey: String = ""
 }

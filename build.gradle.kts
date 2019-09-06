@@ -1,3 +1,4 @@
+import com.jfrog.bintray.gradle.BintrayUploadTask
 import java.util.Properties
 
 plugins {
@@ -7,24 +8,22 @@ plugins {
     maven
 }
 
-java {
-    sourceSets {
-        getByName("main") {
-            java.srcDirs("src/main/kotlin")
-        }
+sourceSets {
+    getByName("main") {
+        java.srcDirs("src/main/kotlin")
     }
 }
 
 gradlePlugin {
     plugins {
-        create("simplePlugin") {
+        create("bintrayUploadPlugin") {
             id = "com.fpliu.bintray"
             implementationClass = "com.fpliu.gradle.BintrayUploadPlugin"
         }
     }
 }
 repositories {
-    jcenter()
+    jcenter { url = uri("https://maven.aliyun.com/repository/jcenter") }
     google()
 }
 
@@ -58,7 +57,7 @@ val rootProjectName: String = project.name
 group = "com.fpliu"
 
 //这个是版本号，必须填写
-version = "1.0.0"
+version = "1.0.7"
 
 // 项目的主页,这个是说明，可随便填
 val siteUrl = "https://github.com/leleliu008/$rootProjectName"
@@ -66,37 +65,42 @@ val siteUrl = "https://github.com/leleliu008/$rootProjectName"
 // GitHub仓库的URL,这个是说明，可随便填
 val gitUrl = "https://github.com/leleliu008/$rootProjectName"
 
-// 生成jar包的task
-val sourcesJarTask = task("sourcesJar", Jar::class) {
-    from(java.sourceSets["main"].java.srcDirs)
-    baseName = rootProjectName
-    classifier = "sources"
+// 生成${baseName}-${version}-sources.jar
+val genSourcesJarTask = task("genSourcesJar", Jar::class) {
+    from(sourceSets["main"].java.srcDirs)
+
+    //https://github.com/gradle/gradle/releases?after=v5.2.1
+    //https://docs.gradle.org/5.1-rc-1/dsl/org.gradle.api.tasks.bundling.Jar.html#org.gradle.api.tasks.bundling.Jar
+    //https://docs.gradle.org/5.0/dsl/org.gradle.api.tasks.bundling.Jar.html#org.gradle.api.tasks.bundling.Jar
+    //5.1-rc-1开始变为如下，它的前一个版本是5.0
+    archiveBaseName.set(rootProjectName)
+    archiveClassifier.set("sources")
 }
 
-// 生成jarDoc的task
-val javadocTask = task("javadoc_", Javadoc::class) {
-    source(java.sourceSets["main"].java.srcDirs)
-    //classpath += project.files(java.)
+// 生成JavDoc，docs/javadoc
+val genJavadocTask = task("genJavadoc", Javadoc::class) {
+    source(sourceSets["main"].java.srcDirs)
     isFailOnError = false
 }
 
-// 生成javaDoc的jar
-val javadocJarTask = task("javadocJar", Jar::class) {
-    from(javadocTask.destinationDir)
-    baseName = rootProjectName
-    classifier = "javadoc"
-}.dependsOn(javadocTask)
+// 生成${baseName}-${version}-javadoc.jar
+val genJavadocJarTask = task("genJavadocJar", Jar::class) {
+    from(genJavadocTask.destinationDir)
+
+    //https://github.com/gradle/gradle/releases?after=v5.2.1
+    //https://docs.gradle.org/5.1-rc-1/dsl/org.gradle.api.tasks.bundling.Jar.html#org.gradle.api.tasks.bundling.Jar
+    //https://docs.gradle.org/5.0/dsl/org.gradle.api.tasks.bundling.Jar.html#org.gradle.api.tasks.bundling.Jar
+    //5.1-rc-1开始变为如下，它的前一个版本是5.0
+    archiveBaseName.set(rootProjectName)
+    archiveClassifier.set("javadoc")
+}.dependsOn(genJavadocTask)
 
 artifacts {
-    add("archives", javadocJarTask)
-    add("archives", sourcesJarTask)
+    add("archives", genJavadocJarTask)
+    add("archives", genSourcesJarTask)
 }
 
-val properties = Properties().apply { load(project.rootProject.file("local.properties").inputStream()) }
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-
     setConfigurations("archives")
     pkg = PackageConfig().apply {
         userOrg = "fpliu"
@@ -109,47 +113,40 @@ bintray {
     }
 }
 
-gradle.addListener(object : TaskExecutionAdapter(){
+gradle.addListener(object : TaskExecutionAdapter() {
     override fun beforeExecute(task: Task) {
         super.beforeExecute(task)
 
-        val taskName = task.name
-        println("beforeExecute() task = $task, taskName = $taskName")
-
-        if (taskName !== "install") {
-            return
-        }
-
-        tasks {
-            "install"(Upload::class) {
-                repositories {
-                    withConvention(MavenRepositoryHandlerConvention::class) {
-                        mavenInstaller {
-                            configuration = configurations.getByName("archives")
-                            pom.project {
-                                withGroovyBuilder {
-                                    "packaging"("jar")
-                                    "artifactId"(rootProjectName)
-                                    "name"(rootProjectName)
+        if (task is BintrayUploadTask) {
+            attachBintrayUserAndKey(task)
+        } else if (task is Upload) {
+            task.configuration = project.configurations.getByName("archives")
+            task.repositories {
+                withConvention(MavenRepositoryHandlerConvention::class) {
+                    mavenInstaller {
+                        pom.project {
+                            withGroovyBuilder {
+                                "packaging"("jar")
+                                "artifactId"(rootProjectName)
+                                "name"(rootProjectName)
+                                "url"(siteUrl)
+                                "licenses" {
+                                    "license" {
+                                        "name"("The Apache Software License, Version 2.0")
+                                        "url"("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                    }
+                                }
+                                "developers" {
+                                    "developer" {
+                                        "id"("fpliu")
+                                        "name"("fpliu")
+                                        "email"("leleliu008@gmail.com")
+                                    }
+                                }
+                                "scm" {
+                                    "connection"(gitUrl)
+                                    "developerConnection"(gitUrl)
                                     "url"(siteUrl)
-                                    "licenses" {
-                                        "license" {
-                                            "name"("The Apache Software License, Version 2.0")
-                                            "url"("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                                        }
-                                    }
-                                    "developers" {
-                                        "developer" {
-                                            "id"("fpliu")
-                                            "name"("fpliu")
-                                            "email"("leleliu008@gmail.com")
-                                        }
-                                    }
-                                    "scm" {
-                                        "connection"(gitUrl)
-                                        "developerConnection"(gitUrl)
-                                        "url"(siteUrl)
-                                    }
                                 }
                             }
                         }
@@ -159,3 +156,25 @@ gradle.addListener(object : TaskExecutionAdapter(){
         }
     }
 })
+
+fun isEmpty(str: String?) = str == null || str == ""
+
+fun attachBintrayUserAndKey(bintrayUploadTask: BintrayUploadTask) {
+    val userHomeDir = System.getProperty("user.home")
+    val bintrayPropertiesFile = File("$userHomeDir/.bintray.properties")
+    if (bintrayPropertiesFile.exists()) {
+        val properties = Properties().apply { load(bintrayPropertiesFile.inputStream()) }
+        val user = properties.getProperty("bintray.user")
+        val key = properties.getProperty("bintray.apikey")
+        if (isEmpty(user) || isEmpty(key)) {
+            throw RuntimeException("please config $userHomeDir/.bintray.properties first!")
+        }
+        bintrayUploadTask.user = user
+        bintrayUploadTask.apiKey = key
+    } else {
+        bintrayPropertiesFile.writeText("bintray.user=\nbintray.apikey=")
+        throw RuntimeException("please config $userHomeDir/.bintray.properties first!")
+    }
+}
+
+
