@@ -1,6 +1,6 @@
 # BintrayUploadGradlePlugin
 
-`Android`开发者经常发布自己的`Android`库到[jCenter](https://jcenter.bintray.com/)，通常需要使用两个[gradle](http://blog.fpliu.com/it/software/gradle)插件：
+`Android`开发者经常发布自己的`Android`库到[bintray](https://bintray.com/)，通常需要使用两个[gradle](http://blog.fpliu.com/it/software/gradle)插件：
 
 - [android-maven-gradle-plugin](https://github.com/dcendents/android-maven-gradle-plugin)
 - [gradle-bintray-plugin](https://github.com/bintray/gradle-bintray-plugin)
@@ -13,6 +13,7 @@
 |-|-|
 |1.0.0|<=5.0|
 |1.0.7|>5.0|
+<br>
 
 ## 1、在Android库工程中使用方法
 
@@ -34,16 +35,18 @@ buildscript {
     }
     dependencies {
         //https://developer.android.google.cn/studio/releases/gradle-plugin.html
-        classpath("com.android.tools.build:gradle:3.4.0")
+        classpath("com.android.tools.build:gradle:3.3.2")
     }
 }
 ```
+`Android Gradle Plugin 3.3.2`以上版本存在Bug，正在解决中。
+
 
 3、在`库模块`的`build.gradle.kts`中应用插件：
 ```
 buildscript {
     repositories {
-        jcenter()
+        jcenter { url = uri("https://maven.aliyun.com/repository/jcenter") }
     }
     dependencies {
         //https://jcenter.bintray.com/com/fpliu/BintrayUploadGradlePlugin
@@ -78,7 +81,7 @@ version = "1.0.0"
 
 val rootProjectName = rootProject.name
 
-bintrayUploadExtension {
+(project.extensions.getByName("bintrayUploadExtension") as com.fpliu.gradle.BintrayUploadExtension).apply {
     developerName = "leleliu008"
     developerEmail = "leleliu008@gamil.com"
 
@@ -113,7 +116,7 @@ pluginManagement {
 ```
 buildscript {
     repositories {
-        jcenter()
+        jcenter { url = uri("https://maven.aliyun.com/repository/jcenter") }
     }
     dependencies {
         classpath("com.fpliu:BintrayUploadGradlePlugin:1.0.7")
@@ -144,7 +147,7 @@ version = "1.0.0"
 
 val rootProjectName = rootProject.name
 
-bintrayUploadExtension {
+(project.extensions.getByName("bintrayUploadExtension") as com.fpliu.gradle.BintrayUploadExtension).apply {
     developerName = "leleliu008"
     developerEmail = "leleliu008@gamil.com"
 
@@ -166,7 +169,7 @@ bintray.user=your bintray user
 ## 3、gradle任务
 
 ### ./gradlew :library:install
-用于生成必须上传到[jCenter](https://jcenter.bintray.com/)必须的文件，执行此命令后在`build`目录下生成如下内容：
+执行此命令后在`build`目录下生成如下内容：
 ```
 build
 ├── libs
@@ -174,14 +177,16 @@ build
 │   └── ${rootProjectName}-${version}-sources.jar
 ├── outputs
 │   └── aar
-│       └── ${rootProjectName}-release.aar
+│       └── ${rootProjectName}-${version}.aar
 ├── poms
 │   └── pom-default.xml
 └── ....
 ```
+因此命令验证生成的内容是否符合您的需要
+
 
 ### ./gradlew :library:bintrayUpload
-这个命令还可以简化成`./gradlew :library:bU`，这就是上传到[jCenter](https://jcenter.bintray.com/)的命令。当然，前提是您已经有了他的账户和仓库。
+这个命令还可以简化成`./gradlew :library:bU`，这就是上传到[bintray](https://bintray.com/)的命令。当然，前提是您已经有了他的账户和仓库。
 
 ### 注意
 上面两个任务前面都加了`:library`，这是因为一般的工程都会包含至少两个子模块，一个一般是`app`或者是`sample`，另一个一般是`library`。从字面意思也可以知道，`library`模块就是编写我们要发布的库的，而`app`或者是`sample`是用来编写示例代码的。
@@ -189,5 +194,5 @@ build
 您的工程如果是单模块的，那么省略`:library`即可。
 
 ## 4、使用示例
-- [Android-emoji](https://github.com/leleliu008/Android-emoji)
-- [RetrofitHelper](https://github.com/leleliu008/RetrofitHelper)
+- [kotlin-ext-jdk](https://github.com/leleliu008/kotlin-ext-jdk)
+- [kotlin-ext-android](https://github.com/leleliu008/kotlin-ext-android)

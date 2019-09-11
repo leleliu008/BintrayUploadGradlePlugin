@@ -3,20 +3,9 @@ import java.util.Properties
 
 plugins {
     id("java-gradle-plugin")
-    
-    maven
-
-    //Kotlin Compiler
-    //https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
-    kotlin("jvm").version("1.3.50")
-
-    //上传到Gradle Plugin Portal的插件
-    //https://plugins.gradle.org/plugin/com.gradle.plugin-publish
-    id("com.gradle.plugin-publish").version("0.10.1")
-    
-    //上传到Bintray的插件
-    //https://plugins.gradle.org/plugin/com.jfrog.bintray
+    kotlin("jvm").version("1.2.21")
     id("com.jfrog.bintray").version("1.7.3")
+    maven
 }
 
 sourceSets {
@@ -33,7 +22,6 @@ gradlePlugin {
         }
     }
 }
-
 repositories {
     jcenter { url = uri("https://maven.aliyun.com/repository/jcenter") }
     google()
@@ -76,19 +64,6 @@ val siteUrl = "https://github.com/leleliu008/$rootProjectName"
 
 // GitHub仓库的URL,这个是说明，可随便填
 val gitUrl = "https://github.com/leleliu008/$rootProjectName"
-
-pluginBundle {
-    website = siteUrl
-    vcsUrl = gitUrl
-    description = "easily upload your library to bintray."
-
-    (plugins) {
-        "bintrayUploadPlugin" {
-            displayName = "Bintray Upload Gradle  plugin"
-            tags = listOf("bintray", "upload", "gradle", "plugin")
-        }
-    }
-}
 
 // 生成${baseName}-${version}-sources.jar
 val genSourcesJarTask = task("genSourcesJar", Jar::class) {
@@ -201,3 +176,5 @@ fun attachBintrayUserAndKey(bintrayUploadTask: BintrayUploadTask) {
         throw RuntimeException("please config $userHomeDir/.bintray.properties first!")
     }
 }
+
+
