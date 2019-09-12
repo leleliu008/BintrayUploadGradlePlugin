@@ -17,7 +17,7 @@
 
 ## 1、在Android库工程中使用方法
 
-1、在`settings.gradle.kts`中配置插件库的镜像（非必须，只是为了加快下载速度）：
+1、在`settings.gradle.kts`中配置[Gradle Plugin Portal](https://plugins.gradle.org)的镜像（非必须，只是为了加快下载速度）：
 ```
 pluginManagement {
     repositories {
@@ -44,6 +44,7 @@ buildscript {
 
 3、在`库模块`的`build.gradle.kts`中应用插件：
 ```
+//plugins块中加载的插件都托管在Gradle PLugin Portal中，或者已经在root build.gradle.kts中的classpath中配置好了
 plugins {
     id("com.android.library")
     
@@ -89,7 +90,7 @@ bintray.user=your bintray user
 
 ## 2、基于JVM的语言的工程使用方法
 
-1、在`settings.gradle.kts`中配置插件库的镜像（非必须，只是为了加快下载速度）：
+1、在`settings.gradle.kts`中配置[Gradle Plugin Portal](https://plugins.gradle.org)的镜像（非必须，只是为了加快下载速度）：
 ```
 pluginManagement {
     repositories {
@@ -101,6 +102,7 @@ pluginManagement {
 
 2、在`库模块`中的`build.gradle.kts`中应用插件：
 ```
+//plugins块中加载的插件都托管在Gradle PLugin Portal中
 plugins {
     java
     maven
