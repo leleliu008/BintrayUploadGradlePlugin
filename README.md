@@ -44,23 +44,13 @@ buildscript {
 
 3、在`库模块`的`build.gradle.kts`中应用插件：
 ```
-buildscript {
-    repositories {
-        jcenter { url = uri("https://maven.aliyun.com/repository/jcenter") }
-    }
-    dependencies {
-        //https://jcenter.bintray.com/com/fpliu/BintrayUploadGradlePlugin
-        classpath("com.fpliu:BintrayUploadGradlePlugin:1.0.7")
-    }
-}
-
-apply {
-    plugin("com.fpliu.bintray")
-}
-
 plugins {
     id("com.android.library")
     
+    //https://github.com/leleliu008/BintrayUploadGradlePlugin
+    //https://plugins.gradle.org/plugin/com.fpliu.bintray
+    id("com.fpliu.bintray").version("1.0.7")
+
     //用于构建jar和pom
     //https://github.com/dcendents/android-maven-gradle-plugin
     id("com.github.dcendents.android-maven").version("2.0")
@@ -69,10 +59,7 @@ plugins {
     //https://github.com/bintray/gradle-bintray-plugin
     id("com.jfrog.bintray").version("1.7.3")
 }
-```
 
-4、在`库模块`的`build.gradle.kts`中配置数据：
-```
 // 这里是groupId，必须填写,一般填你唯一的包名
 group = "com.fpliu"
 
@@ -81,7 +68,7 @@ version = "1.0.0"
 
 val rootProjectName = rootProject.name
 
-(project.extensions.getByName("bintrayUploadExtension") as com.fpliu.gradle.BintrayUploadExtension).apply {
+bintrayUploadExtension {
     developerName = "leleliu008"
     developerEmail = "leleliu008@gamil.com"
 
@@ -93,7 +80,7 @@ val rootProjectName = rootProject.name
 }
 ```
 
-5、在`$HOME/.bintray.properties`中设置`Bintray`的用户和`apiKey`：
+4、在`$HOME/.bintray.properties`中设置`Bintray`的用户和`apiKey`：
 ```
 bintray.apikey=your bintray apiKey
 bintray.user=your bintray user
@@ -114,31 +101,19 @@ pluginManagement {
 
 2、在`库模块`中的`build.gradle.kts`中应用插件：
 ```
-buildscript {
-    repositories {
-        jcenter { url = uri("https://maven.aliyun.com/repository/jcenter") }
-    }
-    dependencies {
-        classpath("com.fpliu:BintrayUploadGradlePlugin:1.0.7")
-    }
-}
-
-apply {
-    plugin("com.fpliu.bintray")
-}
-
 plugins {
     java
     maven
     
+    //https://github.com/leleliu008/BintrayUploadGradlePlugin
+    //https://plugins.gradle.org/plugin/com.fpliu.bintray
+    id("com.fpliu.bintray").version("1.0.7")
+
     //用于上传到jCenter中
     //https://github.com/bintray/gradle-bintray-plugin
     id("com.jfrog.bintray").version("1.7.3")
 }
-```
 
-3、在`库模块`中的`build.gradle.kts`中配置数据：
-```
 // 这里是groupId，必须填写,一般填你唯一的包名
 group = "com.fpliu"
 
@@ -147,7 +122,7 @@ version = "1.0.0"
 
 val rootProjectName = rootProject.name
 
-(project.extensions.getByName("bintrayUploadExtension") as com.fpliu.gradle.BintrayUploadExtension).apply {
+bintrayUploadExtension {
     developerName = "leleliu008"
     developerEmail = "leleliu008@gamil.com"
 
@@ -159,7 +134,7 @@ val rootProjectName = rootProject.name
 }
 ```
 
-4、在`$HOME/.bintray.properties`中设置`Bintray`的用户和`apiKey`：
+3、在`$HOME/.bintray.properties`中设置`Bintray`的用户和`apiKey`：
 ```
 bintray.apikey=your bintray apiKey
 bintray.user=your bintray user
@@ -182,7 +157,7 @@ build
 │   └── pom-default.xml
 └── ....
 ```
-因此命令验证生成的内容是否符合您的需要
+用此命令验证生成的内容是否符合您的需要。
 
 
 ### ./gradlew :library:bintrayUpload
