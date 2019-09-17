@@ -2,6 +2,8 @@ package com.fpliu.gradle
 
 open class BintrayUploadExtension {
 
+    var archivesBaseName: String = ""
+
     var developerName: String = ""
 
     var developerEmail: String = ""

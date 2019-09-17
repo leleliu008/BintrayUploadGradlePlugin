@@ -69,7 +69,7 @@ val rootProjectName: String = project.name
 group = "com.fpliu"
 
 //这个是版本号，必须填写
-version = "1.0.7"
+version = "1.0.8"
 
 // 项目的主页,这个是说明，可随便填
 val siteUrl = "https://github.com/leleliu008/$rootProjectName"
