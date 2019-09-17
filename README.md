@@ -12,7 +12,7 @@
 |本插件的版本|需要Gradle的版本|
 |-|-|
 |1.0.0|<=5.0|
-|1.0.7|>5.0|
+|1.0.8|>5.0|
 <br>
 
 ## 1、在Android库工程中使用方法
@@ -50,7 +50,7 @@ plugins {
     
     //https://github.com/leleliu008/BintrayUploadGradlePlugin
     //https://plugins.gradle.org/plugin/com.fpliu.bintray
-    id("com.fpliu.bintray").version("1.0.7")
+    id("com.fpliu.bintray").version("1.0.8")
 
     //用于构建jar和pom
     //https://github.com/dcendents/android-maven-gradle-plugin
@@ -70,16 +70,20 @@ version = "1.0.0"
 val rootProjectName = rootProject.name
 
 bintrayUploadExtension {
+    archivesBaseName = rootProjectName
+
     developerName = "leleliu008"
     developerEmail = "leleliu008@gamil.com"
 
     projectSiteUrl = "https://github.com/$developerName/$rootProjectName"
     projectGitUrl = "https://github.com/$developerName/$rootProjectName"
 
-    bintrayOrganizationName = "xx"
-    bintrayRepositoryName = "yy"
+    bintrayOrganizationName = "fpliu"
+    bintrayRepositoryName = "newton"
 }
 ```
+![bintray](bintray.png)
+
 
 4、在`$HOME/.bintray.properties`中设置`Bintray`的用户和`apiKey`：
 ```
@@ -109,7 +113,7 @@ plugins {
     
     //https://github.com/leleliu008/BintrayUploadGradlePlugin
     //https://plugins.gradle.org/plugin/com.fpliu.bintray
-    id("com.fpliu.bintray").version("1.0.7")
+    id("com.fpliu.bintray").version("1.0.8")
 
     //用于上传到jCenter中
     //https://github.com/bintray/gradle-bintray-plugin
@@ -125,16 +129,20 @@ version = "1.0.0"
 val rootProjectName = rootProject.name
 
 bintrayUploadExtension {
+    archivesBaseName = rootProjectName
+
     developerName = "leleliu008"
     developerEmail = "leleliu008@gamil.com"
 
     projectSiteUrl = "https://github.com/$developerName/$rootProjectName"
     projectGitUrl = "https://github.com/$developerName/$rootProjectName"
 
-    bintrayOrganizationName = "xx"
-    bintrayRepositoryName = "yy"
+    bintrayOrganizationName = "fpliu"
+    bintrayRepositoryName = "newton"
 }
 ```
+![bintray](bintray.png)
+
 
 3、在`$HOME/.bintray.properties`中设置`Bintray`的用户和`apiKey`：
 ```
