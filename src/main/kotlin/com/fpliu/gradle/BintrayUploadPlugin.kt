@@ -1,7 +1,6 @@
 package com.fpliu.gradle
 
 import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.tasks.BundleAar
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayUploadTask
@@ -38,8 +37,11 @@ class BintrayUploadPlugin : Plugin<Project>, TaskExecutionAdapter() {
         val baseName = bintrayUploadExtension.archivesBaseName
         project.convention.getPlugin(BasePluginConvention::class.java).archivesBaseName = baseName
 
-        // 注意：这里很可能是null，比如，这是一个普通的基于JVM的工程，而不是Android工程
-        val android = project.extensions.findByType(LibraryExtension::class.java)
+        //这里不能使用val android = project.extensions.findByType(LibraryExtension::class.java)，因为如果是基于JVM的工程的话，
+        //根本就没有LibraryExtension::class.java，试图去加载它，会得到以下异常
+        //java.lang.NoClassDefFoundError: com/android/build/gradle/LibraryExtension
+        //下面的代码不会异常的原因是：project.extensions.findByName("android")不为null才会去加载LibraryExtension
+        val android = project.extensions.findByName("android") as? LibraryExtension
         val java = project.convention.getPlugin(JavaPluginConvention::class.java)
 
         val src = if (android == null) {
@@ -90,7 +92,6 @@ class BintrayUploadPlugin : Plugin<Project>, TaskExecutionAdapter() {
 
         when (task) {
             is BintrayUploadTask -> attachBintrayUserAndKey(task)
-            is BundleAar -> task.archiveFileName.set("${task.archiveBaseName.get()}-${task.archiveVersion.get()}.aar")
             is Upload -> {
                 val project = task.project
                 task.configuration = project.configurations.getByName("archives")
@@ -99,7 +100,9 @@ class BintrayUploadPlugin : Plugin<Project>, TaskExecutionAdapter() {
                         it.pom.project {
                             it.withGroovyBuilder {
                                 val bintrayUploadExtension = getBintrayUploadExtension(project)
-                                "packaging"(if (project.plugins.hasPlugin(LibraryPlugin::class.java)) "aar" else "jar")
+                                //这里不能用project.plugins.hasPlugin(LibraryPlugin::class.java)判断
+                                //因为要支持非Android工程
+                                "packaging"(if (project.extensions.findByName("android") == null) "jar" else "aar")
                                 "artifactId"(bintrayUploadExtension.archivesBaseName)
                                 "name"(bintrayUploadExtension.archivesBaseName)
                                 "url"(bintrayUploadExtension.projectSiteUrl)
@@ -124,6 +127,12 @@ class BintrayUploadPlugin : Plugin<Project>, TaskExecutionAdapter() {
                             }
                         }
                     }
+                }
+            }
+            else -> {
+                if (task.javaClass.canonicalName == "com.android.build.gradle.tasks.BundleAar_Decorated") {
+                    task as BundleAar
+                    task.archiveFileName.set("${task.archiveBaseName.get()}-${task.archiveVersion.get()}.aar")
                 }
             }
         }

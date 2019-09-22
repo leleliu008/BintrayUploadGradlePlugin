@@ -13,7 +13,7 @@
 |-|-|-|
 |1.0.0|<=5.0|<=3.3.2|
 |1.0.8|>5.0|<=3.3.2|
-|1.0.9 ~ 1.0.13|>5.0|>=3.2.0|
+|1.0.14|>5.0|>=3.2.0|
 <br>
 
 ## 1、在Android库工程中使用方法
@@ -50,7 +50,7 @@ plugins {
     
     //https://github.com/leleliu008/BintrayUploadGradlePlugin
     //https://plugins.gradle.org/plugin/com.fpliu.bintray
-    id("com.fpliu.bintray").version("1.0.13")
+    id("com.fpliu.bintray").version("1.0.14")
 
     //用于构建jar和pom
     //https://github.com/dcendents/android-maven-gradle-plugin
@@ -113,7 +113,7 @@ plugins {
     
     //https://github.com/leleliu008/BintrayUploadGradlePlugin
     //https://plugins.gradle.org/plugin/com.fpliu.bintray
-    id("com.fpliu.bintray").version("1.0.13")
+    id("com.fpliu.bintray").version("1.0.14")
 
     //用于上传到jCenter中
     //https://github.com/bintray/gradle-bintray-plugin
