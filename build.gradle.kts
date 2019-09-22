@@ -51,8 +51,8 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.21")
 
     //Android Gradle插件
-    //https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html
-    compileOnly("com.android.tools.build:gradle:3.0.1")
+    //https://developer.android.com/studio/releases/gradle-plugin
+    compileOnly("com.android.tools.build:gradle:3.2.0")
 
     //用于构建aar和maven包
     //https://github.com/dcendents/android-maven-gradle-plugin
@@ -69,7 +69,7 @@ val rootProjectName: String = project.name
 group = "com.fpliu"
 
 //这个是版本号，必须填写
-version = "1.0.8"
+version = "1.0.13"
 
 // 项目的主页,这个是说明，可随便填
 val siteUrl = "https://github.com/leleliu008/$rootProjectName"

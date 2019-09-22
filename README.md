@@ -9,10 +9,11 @@
 
 实际上，我们一般的开发者也就是关心几个小点，其他自动生成即可，所以，为了简化这两个插件的使用，我在他们两个的基础上进行了包装。大大简化了他们的使用。
 
-|本插件的版本|需要Gradle的版本|
-|-|-|
-|1.0.0|<=5.0|
-|1.0.8|>5.0|
+|本插件的版本|[gradle](https://gradle.org/releases)|[android-gradle-plugin](https://developer.android.com/studio/releases/gradle-plugin#updating-gradle)|
+|-|-|-|
+|1.0.0|<=5.0|<=3.3.2|
+|1.0.8|>5.0|<=3.3.2|
+|1.0.9 ~ 1.0.13|>5.0|>=3.2.0|
 <br>
 
 ## 1、在Android库工程中使用方法
@@ -35,11 +36,10 @@ buildscript {
     }
     dependencies {
         //https://developer.android.google.cn/studio/releases/gradle-plugin.html
-        classpath("com.android.tools.build:gradle:3.3.2")
+        classpath("com.android.tools.build:gradle:3.5.0")
     }
 }
 ```
-`Android Gradle Plugin 3.3.2`以上版本存在Bug，正在解决中。
 
 
 3、在`库模块`的`build.gradle.kts`中应用插件：
@@ -50,7 +50,7 @@ plugins {
     
     //https://github.com/leleliu008/BintrayUploadGradlePlugin
     //https://plugins.gradle.org/plugin/com.fpliu.bintray
-    id("com.fpliu.bintray").version("1.0.8")
+    id("com.fpliu.bintray").version("1.0.13")
 
     //用于构建jar和pom
     //https://github.com/dcendents/android-maven-gradle-plugin
@@ -113,7 +113,7 @@ plugins {
     
     //https://github.com/leleliu008/BintrayUploadGradlePlugin
     //https://plugins.gradle.org/plugin/com.fpliu.bintray
-    id("com.fpliu.bintray").version("1.0.8")
+    id("com.fpliu.bintray").version("1.0.13")
 
     //用于上传到jCenter中
     //https://github.com/bintray/gradle-bintray-plugin
