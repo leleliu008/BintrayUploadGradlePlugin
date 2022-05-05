@@ -1,3 +1,7 @@
+**NOTE: This repository is now ARCHIVED due to JCenter was completely shut down. [JFrog's announcement](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/)**
+
+<br>
+
 # BintrayUploadGradlePlugin
 
 `Android`开发者经常发布自己的`Android`库到[bintray](https://bintray.com/)，通常需要使用两个[gradle](http://blog.fpliu.com/it/software/gradle)插件：
